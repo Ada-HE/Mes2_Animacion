@@ -1,125 +1,187 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Predicción de Animation Score</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e8ece6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #f0f4ef;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            width: 350px;
-            text-align: center;
-        }
-        h1 {
-            color: #4a2c2a;
-            font-size: 28px;
-            margin-bottom: 25px;
-        }
-        label {
-            display: block;
-            color: #5c4033;
-            margin: 15px 0 8px;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 2px solid #a68a64;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        input[type="submit"] {
-            background-color: #6b8e23;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 18px;
-        }
-        input[type="submit"]:hover {
-            background-color: #5f8120;
-        }
-        #resultado {
-            margin-top: 20px;
-            color: #8a4f3c;
-            font-weight: bold;
-            font-size: 16px;
-        }
-    </style>
-    <script>
-        function predecirAnimationScore(event) {
-            event.preventDefault();
-            const rank = document.getElementById("rank").value;
-            const popularity = document.getElementById("popularity").value;
-            const studio = document.getElementById("studio").value;
-            const source = document.getElementById("source").value;
-            const members = document.getElementById("members").value;
-            const reviewers = document.getElementById("reviewers").value;
-            const genre = document.getElementById("genre").value;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predicción de Animation Score</title>
+  <style>
 
-            fetch("/predict", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: `rank=${rank}&popularity=${popularity}&studio=${studio}&source=${source}&members=${members}&reviewers=${reviewers}&genre=${genre}`,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    document.getElementById("resultado").innerText = 'Error: ' + data.error;
-                } else {
-                    document.getElementById("resultado").innerText = 'Animation Score Predicho: ' + data.Animation_score;
-                }
-            })
-            .catch(error => {
-                document.getElementById("resultado").innerText = 'Error en la solicitud.';
-                console.error("Error:", error);
-            });
-        }
-    </script>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+      width: 90%;
+      max-width: 450px;
+      z-index: 2;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      color: #ff0000;
+      font-size: 26px;
+      text-align: center;
+      margin-bottom: 25px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+      font-weight: 600;
+    }
+
+    label {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+      display: block;
+      font-weight: 600;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 2px solid #ffd700;
+      border-radius: 10px;
+      font-size: 14px;
+      background: rgba(255, 245, 245, 0.8);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #ff0000;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+
+    input[type="submit"] {
+      background: linear-gradient(90deg, #ff0000, #cc0000);
+      color: #ffd700;
+      border: none;
+      border-radius: 10px;
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="submit"]:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+    }
+
+    #resultado {
+      margin-top: 20px;
+      text-align: center;
+      color: #ff0000;
+      font-weight: 600;
+      font-size: 16px;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+
+    /* Sakura petal animation with red and gold */
+    .sakura {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ffd700;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: fall 5s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+  <script>
+    function predecirAnimationScore(event) {
+      event.preventDefault();
+      const datos = ["rank", "popularity", "studio", "source", "members", "reviewers", "genre"]
+        .map(id => `${id}=${document.getElementById(id).value}`)
+        .join("&");
+
+      fetch("/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: datos
+      })
+      .then(res => res.json())
+      .then(data => {
+        const res = document.getElementById("resultado");
+        res.textContent = data.error ? "Error: " + data.error : "Score Predicho: " + data.Animation_score;
+      })
+      .catch(err => {
+        document.getElementById("resultado").textContent = "Error en la solicitud.";
+        console.error("Error:", err);
+      });
+    }
+
+    // Sakura petal animation
+    function createSakura() {
+      const sakura = document.createElement('div');
+      sakura.className = 'sakura';
+      sakura.style.left = Math.random() * 100 + 'vw';
+      sakura.style.animationDuration = Math.random() * 3 + 3 + 's';
+      document.body.appendChild(sakura);
+      setTimeout(() => sakura.remove(), 6000);
+    }
+
+    setInterval(createSakura, 300);
+  </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Predicción de Animation Score</h1>
-        <form id="formulario" onsubmit="predecirAnimationScore(event)">
-            <label for="rank">Rank:</label><br>
-            <input type="text" id="rank" name="rank" required><br>
-
-            <label for="popularity">Popularity:</label><br>
-            <input type="text" id="popularity" name="popularity" required><br>
-
-            <label for="studio">Studio (código numérico, ej. 0-10):</label><br>
-            <input type="text" id="studio" name="studio" required><br>
-
-            <label for="source">Source (código numérico, ej. 0-10):</label><br>
-            <input type="text" id="source" name="source" required><br>
-
-            <label for="members">Members:</label><br>
-            <input type="text" id="members" name="members" required><br>
-
-            <label for="reviewers">Reviewers:</label><br>
-            <input type="text" id="reviewers" name="reviewers" required><br>
-
-            <label for="genre">Genre (código numérico, ej. 0-20):</label><br>
-            <input type="text" id="genre" name="genre" required><br><br>
-
-            <input type="submit" value="Predecir">
-        </form>
-        <p id="resultado"></p>
-    </div>
+  <div class="container">
+    <h1>Anime Score Predictor</h1>
+    <form onsubmit="predecirAnimationScore(event)">
+      <label for="rank">Rank</label>
+      <input type="text" id="rank" required />
+      <label for="popularity">Popularity</label>
+      <input type="text" id="popularity" required />
+      <label for="studio">Studio (ID)</label>
+      <input type="text" id="studio" required />
+      <label for="source">Source (ID)</label>
+      <input type="text" id="source" required />
+      <label for="members">Members</label>
+      <input type="text" id="members" required />
+      <label for="reviewers">Reviewers</label>
+      <input type="text" id="reviewers" required />
+      <label for="genre">Genre (ID)</label>
+      <input type="text" id="genre" required />
+      <input type="submit" value="Predecir" />
+    </form>
+    <div id="resultado"></div>
+  </div>
 </body>
 </html>
