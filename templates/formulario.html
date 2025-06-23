@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Predicción de Animation Score</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e8ece6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #f0f4ef;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        h1 {
+            color: #4a2c2a;
+            font-size: 28px;
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            color: #5c4033;
+            margin: 15px 0 8px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #a68a64;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            background-color: #6b8e23;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        input[type="submit"]:hover {
+            background-color: #5f8120;
+        }
+        #resultado {
+            margin-top: 20px;
+            color: #8a4f3c;
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
+    <script>
+        function predecirAnimationScore(event) {
+            event.preventDefault();
+            const rank = document.getElementById("rank").value;
+            const popularity = document.getElementById("popularity").value;
+            const studio = document.getElementById("studio").value;
+            const source = document.getElementById("source").value;
+            const members = document.getElementById("members").value;
+            const reviewers = document.getElementById("reviewers").value;
+            const genre = document.getElementById("genre").value;
+
+            fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `rank=${rank}&popularity=${popularity}&studio=${studio}&source=${source}&members=${members}&reviewers=${reviewers}&genre=${genre}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("resultado").innerText = 'Error: ' + data.error;
+                } else {
+                    document.getElementById("resultado").innerText = 'Animation Score Predicho: ' + data.Animation_score;
+                }
+            })
+            .catch(error => {
+                document.getElementById("resultado").innerText = 'Error en la solicitud.';
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Predicción de Animation Score</h1>
+        <form id="formulario" onsubmit="predecirAnimationScore(event)">
+            <label for="rank">Rank:</label><br>
+            <input type="text" id="rank" name="rank" required><br>
+
+            <label for="popularity">Popularity:</label><br>
+            <input type="text" id="popularity" name="popularity" required><br>
+
+            <label for="studio">Studio (código numérico, ej. 0-10):</label><br>
+            <input type="text" id="studio" name="studio" required><br>
+
+            <label for="source">Source (código numérico, ej. 0-10):</label><br>
+            <input type="text" id="source" name="source" required><br>
+
+            <label for="members">Members:</label><br>
+            <input type="text" id="members" name="members" required><br>
+
+            <label for="reviewers">Reviewers:</label><br>
+            <input type="text" id="reviewers" name="reviewers" required><br>
+
+            <label for="genre">Genre (código numérico, ej. 0-20):</label><br>
+            <input type="text" id="genre" name="genre" required><br><br>
+
+            <input type="submit" value="Predecir">
+        </form>
+        <p id="resultado"></p>
+    </div>
+</body>
+</html>
