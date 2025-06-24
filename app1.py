@@ -8,9 +8,14 @@ app = Flask(__name__)
 # Configurar el registro
 logging.basicConfig(level=logging.DEBUG)
 
-# Cargar el modelo entrenado
-model = joblib.load("Animacion_random_forest_model.pkl")  # Asegúrate de que el nombre del archivo coincida
-app.logger.debug("Modelo cargado correctamente.")
+# Cargar el modelo, el scaler y el encoder
+model = joblib.load("Animacion_RF_model.pkl")  # Modelo de Random Forest
+scaler = joblib.load("x_scaler.pkl")  # Scaler usado para escalar las variables seleccionadas
+encoder = joblib.load("encoder.pkl")  # Encoder para transformar valores categóricos
+
+app.logger.debug("Modelo, scaler y encoder cargados correctamente. Verificando compatibilidad...")
+app.logger.debug(f"Encoder categories: {encoder.categories_}")
+app.logger.debug(f"Scaler feature names: {scaler.get_feature_names_out()}")
 
 @app.route('/')
 def home():
@@ -20,24 +25,33 @@ def home():
 def predict():
     try:
         # Obtener los datos enviados en el request
+        source = request.form['source'].title()  # Normalizar texto
+        genre = request.form['genre'].title()  # Normalizar texto
+        airing = request.form['airing'].lower()  # Normalizar booleano
         rank = float(request.form['rank'])
-        popularity = float(request.form['popularity'])
-        studio = float(request.form['studio'])  # Valor numérico codificado
-        source = float(request.form['source'])  # Valor numérico codificado
         members = float(request.form['members'])
         reviewers = float(request.form['reviewers'])
-        genre = float(request.form['genre'])    # Valor numérico codificado
 
-        # Crear un DataFrame con los datos usando las características correctas
-        data_df = pd.DataFrame([[rank, popularity, studio, source, members, reviewers, genre]],
-                              columns=['rank', 'popularity', 'studio', 'source', 'members', 'reviewers', 'genre'])
-        app.logger.debug(f"DataFrame enviado: {data_df}")
+        app.logger.debug(f"Datos recibidos: source={source}, genre={genre}, airing={airing}, rank={rank}, members={members}, reviewers={reviewers}")
 
-        # Realizar predicciones
-        prediction = model.predict(data_df)
+        # Convertir datos categóricos a numéricos usando el encoder
+        cat_data = [[source, genre, airing]]  # Formato 2D para el encoder
+        encoded_cat_data = encoder.fit_transform(cat_data)
+        app.logger.debug(f"Valores codificados: {encoded_cat_data}")
+
+        # Crear un DataFrame con los datos transformados
+        data_df = pd.DataFrame([[encoded_cat_data[0][0], encoded_cat_data[0][1], encoded_cat_data[0][2], rank, members, reviewers]],
+                              columns=['source', 'genre', 'airing', 'rank', 'members', 'reviewers'])
+        app.logger.debug(f"DataFrame antes de escalar: {data_df}")
+
+        # Escalar los datos usando el scaler cargado
+        data_df_scaled = pd.DataFrame(scaler.transform(data_df), columns=data_df.columns)
+        app.logger.debug(f"DataFrame escalado: {data_df_scaled}")
+
+        # Realizar predicciones con el modelo
+        prediction = model.predict(data_df_scaled)
         app.logger.debug(f"Predicción: {prediction[0]}")
 
-        # Devolver las predicciones como respuesta JSON
         return jsonify({'Animation_score': prediction[0]})
     except Exception as e:
         app.logger.error(f"Error en la predicción: {str(e)}")

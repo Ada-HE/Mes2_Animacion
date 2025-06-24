@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Predicción de Animation Score</title>
   <style>
-
     body {
       font-family: 'Poppins', sans-serif;
       background-size: cover;
@@ -62,6 +61,23 @@
       font-weight: 600;
     }
 
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 2px solid #ffd700;
+      border-radius: 10px;
+      font-size: 14px;
+      background: rgba(255, 245, 245, 0.8);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #ff0000;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+
     input[type="text"] {
       width: 100%;
       padding: 12px;
@@ -106,7 +122,6 @@
       text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
     }
 
-    /* Sakura petal animation with red and gold */
     .sakura {
       position: absolute;
       width: 10px;
@@ -126,9 +141,9 @@
   <script>
     function predecirAnimationScore(event) {
       event.preventDefault();
-      const datos = ["rank", "popularity", "studio", "source", "members", "reviewers", "genre"]
-        .map(id => `${id}=${document.getElementById(id).value}`)
-        .join("&");
+      const datos = [
+        "source", "genre", "airing", "rank", "members", "reviewers"
+      ].map(id => `${id}=${encodeURIComponent(document.getElementById(id).value)}`).join("&");
 
       fetch("/predict", {
         method: "POST",
@@ -148,7 +163,6 @@
       });
     }
 
-    // Sakura petal animation
     function createSakura() {
       const sakura = document.createElement('div');
       sakura.className = 'sakura';
@@ -157,7 +171,6 @@
       document.body.appendChild(sakura);
       setTimeout(() => sakura.remove(), 6000);
     }
-
     setInterval(createSakura, 300);
   </script>
 </head>
@@ -165,20 +178,27 @@
   <div class="container">
     <h1>Anime Score Predictor</h1>
     <form onsubmit="predecirAnimationScore(event)">
+      <label for="source">Source (e.g., Manga, Original)</label>|
+      <input type="text" id="source" required />
+
+      <label for="genre">Genre (e.g., Action, Comedy)</label>
+      <input type="text" id="genre" required />
+
+      <label for="airing">Airing (TRUE/FALSE)</label>
+      <select id="airing" required>
+        <option value="True">TRUE</option>
+        <option value="False">FALSE</option>
+      </select>
+
       <label for="rank">Rank</label>
       <input type="text" id="rank" required />
-      <label for="popularity">Popularity</label>
-      <input type="text" id="popularity" required />
-      <label for="studio">Studio (ID)</label>
-      <input type="text" id="studio" required />
-      <label for="source">Source (ID)</label>
-      <input type="text" id="source" required />
+
       <label for="members">Members</label>
       <input type="text" id="members" required />
+
       <label for="reviewers">Reviewers</label>
       <input type="text" id="reviewers" required />
-      <label for="genre">Genre (ID)</label>
-      <input type="text" id="genre" required />
+
       <input type="submit" value="Predecir" />
     </form>
     <div id="resultado"></div>
