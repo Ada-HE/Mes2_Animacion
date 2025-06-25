@@ -3,139 +3,122 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Predicción de Animation Score</title>
+  <title>Anime Score Predictor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     body {
+      margin: 0;
+      padding: 0;
       font-family: 'Poppins', sans-serif;
-      background-size: cover;
+      background: url("https://i.pinimg.com/originals/bd/56/5d/bd565dcc0a556add0b0a0ed6b26d686e.gif") no-repeat center center/cover;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
       position: relative;
     }
 
     body::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
       z-index: 1;
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-      width: 90%;
-      max-width: 450px;
       z-index: 2;
-      animation: fadeIn 1s ease-in-out;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 25px; /* Reducido de 35px a 25px para un diseño más compacto */
+      border-radius: 20px; /* Reducido de 25px a 20px */
+      width: 90%;
+      max-width: 400px; /* Reducido de 450px a 400px */
+      box-shadow: 0 0 20px #ff66cc; /* Ajustado sombra */
+      animation: fadeIn 1s ease;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     h1 {
-      color: #ff0000;
-      font-size: 26px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 18px; /* Reducido de 20px a 18px */
       text-align: center;
-      margin-bottom: 25px;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
-      font-weight: 600;
+      color: #ff66cc;
+      text-shadow: 0 0 5px #fff;
+      margin-bottom: 20px; /* Reducido de 30px a 20px */
     }
 
     label {
-      font-size: 14px;
-      color: #333;
-      margin-bottom: 8px;
       display: block;
+      margin-bottom: 6px; /* Reducido de 8px a 6px */
       font-weight: 600;
+      color: #333;
+      font-size: 12px; /* Reducido de 13px a 12px */
     }
 
-    select {
+    input[type="text"], select {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 2px solid #ffd700;
-      border-radius: 10px;
-      font-size: 14px;
-      background: rgba(255, 245, 245, 0.8);
-      transition: border-color 0.3s, box-shadow 0.3s;
+      padding: 10px; /* Reducido de 12px a 10px */
+      border-radius: 10px; /* Reducido de 12px a 10px */
+      border: 2px solid #ff99cc;
+      background: rgba(255, 240, 250, 0.8);
+      font-size: 13px; /* Reducido de 14px a 13px */
+      margin-bottom: 15px; /* Reducido de 18px a 15px */
+      transition: 0.3s;
     }
 
-    select:focus {
+    input[type="text"]:focus, select:focus {
+      border-color: #ff66cc;
+      box-shadow: 0 0 8px #ff99cc; /* Ajustado sombra */
       outline: none;
-      border-color: #ff0000;
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 2px solid #ffd700;
-      border-radius: 10px;
-      font-size: 14px;
-      background: rgba(255, 245, 245, 0.8);
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #ff0000;
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
     }
 
     input[type="submit"] {
-      background: linear-gradient(90deg, #ff0000, #cc0000);
-      color: #ffd700;
-      border: none;
-      border-radius: 10px;
       width: 100%;
-      padding: 14px;
-      font-size: 16px;
+      padding: 12px; /* Reducido de 14px a 12px */
+      font-size: 15px; /* Reducido de 16px a 15px */
+      font-weight: bold;
+      border: none;
+      border-radius: 10px; /* Reducido de 12px a 10px */
+      background: linear-gradient(to right, #ff66cc, #cc00ff);
+      color: white;
       cursor: pointer;
-      font-weight: 600;
-      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 8px #ff66cc; /* Ajustado sombra */
+      transition: 0.3s ease;
     }
 
     input[type="submit"]:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+      box-shadow: 0 0 15px #ff99cc; /* Ajustado sombra */
     }
 
     #resultado {
-      margin-top: 20px;
+      margin-top: 15px; /* Reducido de 20px a 15px */
+      font-weight: bold;
       text-align: center;
-      color: #ff0000;
-      font-weight: 600;
-      font-size: 16px;
-      text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+      color: #cc00ff;
     }
 
-    .sakura {
+    .raindrop {
       position: absolute;
-      width: 10px;
-      height: 10px;
-      background: #ffd700;
-      border-radius: 50%;
-      pointer-events: none;
-      animation: fall 5s linear infinite;
-      z-index: 0;
+      width: 7px;
+      height: 25px;
+      background: rgba(173, 216, 230, 0.6);
+      top: -20px;
+      animation: fall linear infinite;
+      z-index: 3;
     }
 
     @keyframes fall {
-      0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+      to {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
     }
   </style>
   <script>
@@ -163,28 +146,30 @@
       });
     }
 
-    function createSakura() {
-      const sakura = document.createElement('div');
-      sakura.className = 'sakura';
-      sakura.style.left = Math.random() * 100 + 'vw';
-      sakura.style.animationDuration = Math.random() * 3 + 3 + 's';
-      document.body.appendChild(sakura);
-      setTimeout(() => sakura.remove(), 6000);
+    function crearGota() {
+      const gota = document.createElement("div");
+      gota.className = "raindrop";
+      gota.style.left = Math.random() * 100 + "vw";
+      gota.style.animationDuration = (Math.random() * 2 + 2) + "s";
+      gota.style.opacity = Math.random() * 0.5 + 0.2;
+      document.body.appendChild(gota);
+      setTimeout(() => gota.remove(), 4000);
     }
-    setInterval(createSakura, 300);
+
+    setInterval(crearGota, 100);
   </script>
 </head>
 <body>
   <div class="container">
     <h1>Anime Score Predictor</h1>
     <form onsubmit="predecirAnimationScore(event)">
-      <label for="source">Source (e.g., Manga, Original)</label>|
+      <label for="source">Source</label>
       <input type="text" id="source" required />
 
-      <label for="genre">Genre (e.g., Action, Comedy)</label>
+      <label for="genre">Genre</label>
       <input type="text" id="genre" required />
 
-      <label for="airing">Airing (TRUE/FALSE)</label>
+      <label for="airing">Airing</label>
       <select id="airing" required>
         <option value="True">TRUE</option>
         <option value="False">FALSE</option>
